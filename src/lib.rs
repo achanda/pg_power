@@ -2,9 +2,36 @@ use pgrx::prelude::*;
 
 pgrx::pg_module_magic!();
 
-#[pg_extern]
-fn hello_pg_power() -> &'static str {
-    "Hello, pg_power"
+use pgrx::hooks::ExecutorHooks;
+use pgrx::pg_sys;
+
+#[pg_guard]
+pub extern "C" fn _PG_init() {
+    ExecutorHooks::register(CustomExecutorHooks {})
+}
+
+struct CustomExecutorHooks;
+
+impl ExecutorHooks for CustomExecutorHooks {
+    fn standard_executor_run(
+        &self,
+        query_desc: *mut pg_sys::QueryDesc,
+        direction: pg_sys::ScanDirection,
+        count: u64,
+        execute_once: bool,
+    ) {
+        // Print the query before running
+        unsafe {
+            if let Some(query_string) = (*query_desc).sourceText.as_ref() {
+                pgrx::log!("Executing query: {}", query_string);
+            }
+        }
+
+        // Call the real standard_executorRun
+        unsafe {
+            pg_sys::standard_ExecutorRun(query_desc, direction, count, execute_once);
+        }
+    }
 }
 
 #[cfg(any(test, feature = "pg_test"))]
