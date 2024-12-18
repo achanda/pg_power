@@ -1,0 +1,4 @@
+comment = 'get power usage of a query'
+default_version = '0.0.1'
+module_pathname = '$libdir/pg_power'
+relocatable = false
