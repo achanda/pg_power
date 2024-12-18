@@ -1,3 +1,5 @@
+> :warning: **Do not run this in production or in any secure system
+
 To run this, make sure the postgres binary can read the RAPL file
 
 ```
