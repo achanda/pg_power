@@ -14,8 +14,7 @@ unsigned long long read_energy_uj() {
     FILE* file = fopen(file_path, "r");
 
     if (file == NULL) {
-        fprintf(stderr, "[ERROR] Failed to open energy file: %s\n", file_path);
-        perror("Error details");
+        elog(LOG, "[ERROR] Failed to open energy file: %s\n", file_path);
         exit(EXIT_FAILURE);
     }
 
@@ -23,8 +22,7 @@ unsigned long long read_energy_uj() {
     int result = fscanf(file, "%llu", &energy_value);
 
     if (result != 1) {
-        fprintf(stderr, "[ERROR] Failed to read energy value from file: %s\n", file_path);
-        fclose(file);
+        elog(LOG, "[ERROR] Failed to read energy value from file: %s\n", file_path);
         exit(EXIT_FAILURE);
     }
 
